@@ -1,7 +1,7 @@
 {
-  "name": "Yii-Debug",
+  "name": "Yii2-Debug",
   "version": "0.0.1",
-  "description": "yii-debug chrome扩展",
+  "description": "yii2-debug chrome扩展",
   "manifest_version":2,
   "content_scripts": [
         {
