@@ -1,4 +1,4 @@
-if(document.cookie.indexOf('YII_DEBUG_TAG') > 0) {
+if(document.cookie.indexOf('YII_DEBUG_TAG') >= 0) {
 	var tag = getCookie('YII_DEBUG_TAG');
 	if(!document.location.pathname.startsWith('/debug/default')) {
 		showToolBar(tag);

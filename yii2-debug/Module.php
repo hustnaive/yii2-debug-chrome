@@ -128,7 +128,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
         $app->on(Application::EVENT_BEFORE_REQUEST, function () use ($app) {
 //             $app->getView()->on(View::EVENT_END_BODY, [$this, 'renderToolbar']);
             if(!$app->request->isAjax) {
-                setcookie('YII_DEBUG_TAG',$this->logTarget->tag);
+                setcookie('YII_DEBUG_TAG', $this->logTarget->tag, 0, '/');
             }
         });
 
