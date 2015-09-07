@@ -1,0 +1,12 @@
+{
+  "name": "Yii-Debug",
+  "version": "0.0.1",
+  "description": "yii-debug chrome扩展",
+  "manifest_version":2,
+  "content_scripts": [
+        {
+            "matches": ["*://*/*"],
+            "js": ["js/yii-debug-toolbar.js"]
+        }
+  ]
+}
