@@ -1,12 +1,21 @@
 {
   "name": "Yii2-Debug",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "yii2-debug chrome扩展",
   "manifest_version":2,
+  "permissions": [
+    "webRequest",
+    "<all_urls>"
+  ],
   "content_scripts": [
         {
             "matches": ["*://*/*"],
             "js": ["js/yii-debug-toolbar.js"]
         }
-  ]
+  ],
+  "background": {
+        "scripts": [
+            "js/background.js"
+        ] 
+  }
 }

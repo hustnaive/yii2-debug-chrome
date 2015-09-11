@@ -1,23 +1,25 @@
-if(document.cookie.indexOf('YII_DEBUG_TAG') >= 0) {
-	var tag = getCookie('YII_DEBUG_TAG');
-	if(!document.location.pathname.startsWith('/debug/default')) {
-		showToolBar(tag);
+chrome.runtime.sendMessage({action:'get-header',url:window.location.href.split('#')[0]},function(header){
+	if(header) {
+		var header = new HttpHeader(header.headers);
+		var web = header.get('yii_web');
+		var tag = header.get('yii_debug_tag');
+		if(!document.location.pathname.startsWith((web+'/debug/default').replace(/^\/*/g,'/'))) {
+			showToolBar(tag, web);
+		}
 	}
+});
+
+function HttpHeader(headers) {
+	this.headers = headers;
 }
 
-function getCookie(name){
-    var result = null;
-	//对cookie信息进行相应的处理，方便搜索
-	var myCookie = document.cookie+";"; 
-	var searchName = name+"=";
-	var startOfCookie = myCookie.indexOf(searchName);
-	var endOfCookie;
-	if(startOfCookie != -1){
-		startOfCookie += searchName.length;
-		endOfCookie = myCookie.indexOf(";",startOfCookie);
-		result = (myCookie.substring(startOfCookie,endOfCookie));
+HttpHeader.prototype.get = function(name) {
+	for(var i in this.headers) {
+		if(this.headers[i].name.toLowerCase() == name.toLowerCase()) {
+			return this.headers[i].value;
+		}
 	}
-	return result;
+	return null;
 }
 
 function getDoc(fn) {
@@ -219,7 +221,7 @@ function getToolBar() {
  */});
 }
 
-function showToolBar(tag) {
+function showToolBar(tag,web) {
 	var toolar = document.createElement("div");
 	toolar.innerHTML = getToolBar();
 	document.body.appendChild(toolar);
@@ -245,7 +247,9 @@ function showToolBar(tag) {
     var e = document.getElementById('yii-debug-toolbar');
     if (e) {
         e.style.display = 'block';
-        var url = e.getAttribute('data-url')+tag;
+        var url = web + e.getAttribute('data-url')+tag;
+		url = url.replace(/^\/*/g,'/');
+		console.log(url);
         ajax(url, {
             success: function (xhr) {
                 var div = document.createElement('div');

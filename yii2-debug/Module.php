@@ -60,7 +60,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
      * @var integer the maximum number of debug data files to keep. If there are more files generated,
      * the oldest ones will be removed.
      */
-    public $historySize = 50;
+    public $historySize = 1000;
     /**
      * @var boolean whether to enable message logging for the requests about debug module actions.
      * You normally do not want to keep these logs because they may distract you from the logs about your applications.
@@ -125,10 +125,26 @@ class Module extends \yii\base\Module implements BootstrapInterface
         $this->logTarget = Yii::$app->getLog()->targets['debug'] = new LogTarget($this);
 
         // delay attaching event handler to the view component after it is fully configured
-        $app->on(Application::EVENT_BEFORE_REQUEST, function () use ($app) {
+//         $app->on(Application::EVENT_BEFORE_REQUEST, function () use ($app) {
 //             $app->getView()->on(View::EVENT_END_BODY, [$this, 'renderToolbar']);
-            if(!$app->request->isAjax) {
-                setcookie('YII_DEBUG_TAG', $this->logTarget->tag, 0, '/');
+//         });
+
+//         $app->on(Application::EVENT_BEFORE_REQUEST, function () use ($app) {
+//             if(!$app->request->isAjax) {
+//                 $YII_WEB = '/'.ltrim(@Yii::$app->params['static_host'].Yii::getAlias('@web'),'/');
+//                 $YII_DEBUG_TAG = $this->logTarget->tag;
+            
+//                 setcookie('YII_DEBUG_TAG'.$YII_WEB, $YII_DEBUG_TAG, 0, '/');
+//                 setcookie('YII_WEB', $YII_WEB, 0, '/');
+//             }
+//         });
+        
+        $app->on(Application::EVENT_BEFORE_REQUEST, function() use($app) {
+            if($app->request instanceof \yii\web\Request && !$app->request->isAjax) {
+                $YII_WEB = '/'.ltrim(@Yii::$app->params['static_host'].Yii::getAlias('@web'),'/');
+                $YII_DEBUG_TAG = $this->logTarget->tag;
+                $app->response->headers['YII_DEBUG_TAG'] = $YII_DEBUG_TAG;
+                $app->response->headers['YII_WEB'] = $YII_WEB;
             }
         });
 
