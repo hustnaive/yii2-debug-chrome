@@ -160,11 +160,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public function beforeAction($action)
     {
-        $headers = \Yii::$app->request->getHeaders();
-        if(!isset($headers['yii-debug-auth']) || $headers['yii-debug-auth'] != $this->yii_debug_auth) {
-            return false;
-        }
-        else return true;
+
         
         if (!$this->enableDebugLogs) {
             foreach (Yii::$app->getLog()->targets as $target) {
@@ -224,20 +220,25 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     protected function checkAccess()
     {
-        $ip = Yii::$app->getRequest()->getUserIP();
-        foreach ($this->allowedIPs as $filter) {
-            if ($filter === '*' || $filter === $ip || (($pos = strpos($filter, '*')) !== false && !strncmp($ip, $filter, $pos))) {
-                return true;
-            }
+//         $ip = Yii::$app->getRequest()->getUserIP();
+//         foreach ($this->allowedIPs as $filter) {
+//             if ($filter === '*' || $filter === $ip || (($pos = strpos($filter, '*')) !== false && !strncmp($ip, $filter, $pos))) {
+//                 return true;
+//             }
+//         }
+//         foreach ($this->allowedHosts as $hostname) {
+//             $filter = gethostbyname($hostname);
+//             if ($filter === $ip) {
+//                 return true;
+//             }
+//         }
+//         Yii::warning('Access to debugger is denied due to IP address restriction. The requesting IP address is ' . $ip, __METHOD__);
+//         return false;
+        $headers = \Yii::$app->request->getHeaders();
+        if(isset($headers['yii-debug-auth']) && $headers['yii-debug-auth'] === $this->yii_debug_auth) {
+            return true;
         }
-        foreach ($this->allowedHosts as $hostname) {
-            $filter = gethostbyname($hostname);
-            if ($filter === $ip) {
-                return true;
-            }
-        }
-        Yii::warning('Access to debugger is denied due to IP address restriction. The requesting IP address is ' . $ip, __METHOD__);
-        return false;
+        else return false;
     }
 
     /**

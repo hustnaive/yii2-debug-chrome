@@ -1,6 +1,7 @@
 {
   "name": "YII 2 DEBUG",
   "version": "0.1.1",
+  "icons": { "128": "icon.jpg" },
   "description": "yii2-debug chrome扩展",
   "manifest_version":2,
   "permissions": [
