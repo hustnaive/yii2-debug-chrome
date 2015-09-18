@@ -1,8 +1,8 @@
 chrome.runtime.sendMessage({action:'get-header',url:window.location.href.split('#')[0]},function(header){
 	if(header) {
 		var header = new HttpHeader(header.headers);
-		var web = header.get('yii_web');
-		var tag = header.get('yii_debug_tag');
+		var web = header.get('yii-web');
+		var tag = header.get('yii-debug-tag');
 		if(!document.location.pathname.startsWith((web+'/debug/default').replace(/^\/*/g,'/'))) {
 			showToolBar(tag, web);
 		}

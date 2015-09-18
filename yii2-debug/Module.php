@@ -22,6 +22,7 @@ use yii\web\ForbiddenHttpException;
  */
 class Module extends \yii\base\Module implements BootstrapInterface
 {
+    public $yii_debug_auth = 'abc';
     /**
      * @var array the list of IPs that are allowed to access this module.
      * Each array element represents a single IP filter which can be either an IP address
@@ -143,8 +144,8 @@ class Module extends \yii\base\Module implements BootstrapInterface
             if($app->request instanceof \yii\web\Request && !$app->request->isAjax) {
                 $YII_WEB = '/'.ltrim(@Yii::$app->params['static_host'].Yii::getAlias('@web'),'/');
                 $YII_DEBUG_TAG = $this->logTarget->tag;
-                $app->response->headers['YII_DEBUG_TAG'] = $YII_DEBUG_TAG;
-                $app->response->headers['YII_WEB'] = $YII_WEB;
+                $app->response->headers['YII-DEBUG-TAG'] = $YII_DEBUG_TAG;
+                $app->response->headers['YII-WEB'] = $YII_WEB;
             }
         });
 
@@ -159,6 +160,12 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public function beforeAction($action)
     {
+        $headers = \Yii::$app->request->getHeaders();
+        if(!isset($headers['yii-debug-auth']) || $headers['yii-debug-auth'] != $this->yii_debug_auth) {
+            return false;
+        }
+        else return true;
+        
         if (!$this->enableDebugLogs) {
             foreach (Yii::$app->getLog()->targets as $target) {
                 $target->enabled = false;
