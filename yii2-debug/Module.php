@@ -87,6 +87,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     {
         parent::init();
         $this->dataPath = Yii::getAlias($this->dataPath);
+        \Yii::$app->getAssetManager()->baseUrl = @\Yii::$app->params['static_host'].\Yii::getAlias('@web').'/assets';
         $this->initPanels();
     }
 
@@ -147,6 +148,12 @@ class Module extends \yii\base\Module implements BootstrapInterface
                 $app->response->headers['YII-DEBUG-TAG'] = $YII_DEBUG_TAG;
                 $app->response->headers['YII-WEB'] = $YII_WEB;
             }
+
+            $headers = $app->request->getHeaders();
+            if( function_exists('xhprof_enable') && $headers['xhprof-enabled']) {
+                \xhprof_enable(\XHPROF_FLAGS_CPU | XHPROF_FLAGS_NO_BUILTINS | \XHPROF_FLAGS_MEMORY);
+            }
+            
         });
 
         $app->getUrlManager()->addRules([
@@ -254,6 +261,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
             'db' => ['class' => 'yii\debug\panels\DbPanel'],
             'assets' => ['class' => 'yii\debug\panels\AssetPanel'],
             'mail' => ['class' => 'yii\debug\panels\MailPanel'],
+            'xhprof' => ['class' => 'yii\debug\panels\XhprofPanel']
         ];
     }
 }

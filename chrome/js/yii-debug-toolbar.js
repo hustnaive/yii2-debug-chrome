@@ -267,5 +267,15 @@ function showToolBar(tag,web) {
                 e.innerHTML = xhr.responseText;
             }
         });
+
+		toolar.addEventListener('click',function(ev) {
+			if(ev.path[1] === document.getElementById('toggle_xhprof')) {
+				chrome.runtime.sendMessage({action:'toggle-xhprof'},function(resp){
+					console.log(resp);
+					window.location.reload();
+				});
+			}
+			return false;
+		},false);
     }
 }

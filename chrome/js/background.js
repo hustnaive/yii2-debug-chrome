@@ -1,10 +1,11 @@
 var headers = {};
 var yii_debug_auth = localStorage['yii_debug_auth'] || 'abc';
+var toggle_xhprof = 0;
 
 chrome.webRequest.onHeadersReceived.addListener(function(details) {
 	var header = new HttpHeader(details.responseHeaders);
 	if(header.get('yii-web')) {
-		headers[details.url] = header;
+		headers[details.url.split('#')[0]] = header;
 	}
 },{urls: ["<all_urls>"]},["responseHeaders"]);
 
@@ -19,6 +20,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
 			return sendResponse(yii_debug_auth);
 			case 'get-auth':
 			return sendResponse(yii_debug_auth);
+			case 'toggle-xhprof':
+			toggle_xhprof = 1 - toggle_xhprof;
+			return sendResponse(toggle_xhprof);
 			default: return sendResponse(null);
 		}
 	}
@@ -29,6 +33,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details){
         
 		var header = new HttpHeader(details.requestHeaders);
 		header.set('yii-debug-auth',yii_debug_auth);
+		header.set('xhprof-enabled',toggle_xhprof + '');
 		console.log(header.headers);
         return {requestHeaders: header.headers};
 }, 
